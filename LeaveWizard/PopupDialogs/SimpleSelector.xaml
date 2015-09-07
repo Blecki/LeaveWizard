@@ -1,0 +1,6 @@
+﻿<Window x:Class="LeaveWizard.SimpleSelector"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SimpleSelector" Height="300" Width="300" WindowStyle="SingleBorderWindow" ShowInTaskbar="False" Topmost="True" WindowStartupLocation="CenterScreen">
+        <ListBox x:Name="OptionBox" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="OptionBox_SelectionChanged"/>
+</Window>

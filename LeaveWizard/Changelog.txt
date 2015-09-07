@@ -1,0 +1,7 @@
+﻿0.0.1 9-5-2015 Began change log
+Fix failure to parse data after saving.
+Fix erroneous discarding of changes to sub assignments on propogatable leave days.
+Fix failure to display + denied leave option.
+Fix assinging a substitute to two routes on the next week when a propogatable day assignment is changed.
+Add leave policy, and ability to modify it.
+Fix grid cells having wrong background color after changing weeks

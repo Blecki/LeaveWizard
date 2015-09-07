@@ -1,0 +1,13 @@
+﻿Support PTF substitutes
+
+Settings pane
+	- Days per sub
+	- Subs to schedule on sunday
+	- Other settings of leave policy - days in advance?
+
+Leave checker
+	* Input carrier name & leave start / end dates.
+	* Analyze requested leave
+		* List each day, and results of checking that day - (Okay, or reason to deny leave)
+	* Offer overall recommendation (Coverable or not)
+	* Buttons to approve or deny, automatically add leave to appropriate weeks.

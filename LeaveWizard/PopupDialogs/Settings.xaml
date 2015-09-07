@@ -1,0 +1,17 @@
+﻿<Window x:Class="LeaveWizard.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Leave Policy Settings" Height="300" Width="203" Topmost="True" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" ShowInTaskbar="False" ResizeMode="NoResize" SizeToContent="Height">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Days Per Sub:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBox x:Name="DaysPerSubInput" Grid.Row="0" Margin="90,0,0,0" HorizontalAlignment="Stretch" TextChanged="DaysPerSubInput_TextChanged"/>
+        <TextBlock Grid.Row="1" Text="Amazon Routes:" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBox x:Name="AmazonRoutesInput" Grid.Row="1" Margin="90,0,0,0" HorizontalAlignment="Stretch" TextChanged="AmazonRoutesInput_TextChanged" />
+        <Button IsDefault="True" x:Name="Okay" Content="OKAY!" Click="Button_Click" Grid.Row="2" HorizontalAlignment="Right" Margin="2,2,2,2"/>
+    </Grid>
+</Window>
