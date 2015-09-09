@@ -61,48 +61,48 @@ namespace LeaveWizard
                 {
                     bool subAssigned = false;
 
-                    if (day.LeaveType != 'H') // H days should only exist as a result of a future holiday.
+                    if (day.LeaveType != "H") // H days should only exist as a result of a future holiday.
                     {
                         if (DailySchedule.PropogatableLeaveTypes.Contains(day.LeaveType))
                         {
                             var existingPropogatableDay = Start.DailySchedules[i].ReliefDays.Find(l => l.Carrier == day.Carrier && l.LeaveType == day.LeaveType);
 
-                            if (existingPropogatableDay == null && day.LeaveType == 'J')
+                            if (existingPropogatableDay == null && day.LeaveType == "J")
                             {
                                 var tuple = Start.PendingJDays.Find(t => t.Item2.Carrier == day.Carrier && t.Item2.LeaveType == day.LeaveType);
                                 if (tuple != null) existingPropogatableDay = tuple.Item2;
                             }
 
                             if (existingPropogatableDay == null)
-                                result.AppendFormat("L\"{0}\"{1}{2}\n", day.Carrier, WeekData.DayNames[i], day.LeaveType);
+                                result.AppendFormat("L\"{0}\"{1}{2}\n", day.Carrier, Constants.DayNames[i], day.LeaveType);
                             else
                             {
                                 subAssigned = true;
                                 if (day.Substitute != existingPropogatableDay.Substitute)
-                                    result.AppendFormat("A\"{0}\"\"{1}\"{2}\n", day.Carrier, day.Substitute, WeekData.DayNames[i]);
+                                    result.AppendFormat("A\"{0}\"\"{1}\"{2}\n", day.Carrier, day.Substitute, Constants.DayNames[i]);
                             }
                         }
                         else
-                            result.AppendFormat("L\"{0}\"{1}{2}\n", day.Carrier, WeekData.DayNames[i], day.LeaveType);
+                            result.AppendFormat("L\"{0}\"{1}{2}\n", day.Carrier, Constants.DayNames[i], day.LeaveType);
                     }
 
                     if (!subAssigned && day.Substitute != "DUMMY")
-                        result.AppendFormat("A\"{0}\"\"{1}\"{2}\n", day.Carrier, day.Substitute, WeekData.DayNames[i]);
+                        result.AppendFormat("A\"{0}\"\"{1}\"{2}\n", day.Carrier, day.Substitute, Constants.DayNames[i]);
                 }
 
                 foreach (var day in Start.DailySchedules[i].ReliefDays.Where(r => DailySchedule.PropogatableLeaveTypes.Contains(r.LeaveType)))
                 {
                     var existingDay = End.DailySchedules[i].ReliefDays.Find(l => l.Carrier == day.Carrier && l.LeaveType == day.LeaveType);
                     if (existingDay == null)
-                        result.AppendFormat("DL\"{0}\"{1}\n", day.Carrier, WeekData.DayNames[i]);
+                        result.AppendFormat("DL\"{0}\"{1}\n", day.Carrier, Constants.DayNames[i]);
                 }
 
                 if (End.DailySchedules[i].IsHoliday)
-                    result.AppendFormat("H{0}\n", WeekData.DayNames[i]);
+                    result.AppendFormat("H{0}\n", Constants.DayNames[i]);
 
                 foreach (var day in End.DailySchedules[i].DeniedLeave)
                 {
-                    result.AppendFormat("LD\"{0}\"{1}{2}\n", day.Carrier, WeekData.DayNames[i], day.LeaveType);
+                    result.AppendFormat("LD\"{0}\"{1}{2}\n", day.Carrier, Constants.DayNames[i], day.LeaveType);
                 }
             }
 
@@ -110,7 +110,7 @@ namespace LeaveWizard
             {
                 var existingJDay = End.DailySchedules[(int)jDay.Item1].ReliefDays.Find(l => l.Carrier == jDay.Item2.Carrier && l.LeaveType == jDay.Item2.LeaveType);
                 if (existingJDay == null)
-                    result.AppendFormat("DL\"{0}\"{1}\n", jDay.Item2.Carrier, WeekData.DayNames[(int)jDay.Item1]);
+                    result.AppendFormat("DL\"{0}\"{1}\n", jDay.Item2.Carrier, Constants.DayNames[(int)jDay.Item1]);
             }
 
             return result.ToString();

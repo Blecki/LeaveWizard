@@ -59,23 +59,16 @@ namespace LeaveWizard
             {
                 AddToCell(MainGrid, Column, Row, new TextBlock
                 {
-                    Text = "| " + Entry.LeaveType.ToString(),
-                    ToolTip = String.Format("{0} {1}", Entry.LeaveType, Entry.Carrier),
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
-                });
-                AddToCell(MainGrid, Column, Row, new TextBlock
-                {
-                    Text = Entry.Substitute,
+                    Text =  String.Format("| {0} {1}", Entry.LeaveType, Entry.Substitute),
                     ToolTip = "Click to schedule substitute",
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
-                    Margin = new Thickness(22, 0, 0, 0)
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
                 }).MouseDown += (sender, args) =>
                     {
                         var subSelector = SimpleSelector.Show("Select Substitute", EnumerateAvailableSubs(Entry, Column - 2));
                         if (subSelector.SelectionMade)
                         {
                             ApplyAction(String.Format("A\"{0}\"\"{1}\"{2} ",
-                                Entry.Carrier, subSelector.SelectedItem, WeekData.DayNames[Column - 2]));
+                                Entry.Carrier, subSelector.SelectedItem, Constants.DayNames[Column - 2]));
                         }
                     };
             }
@@ -93,7 +86,7 @@ namespace LeaveWizard
                     Text = "[del] ",
                     HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
                     ToolTip = "Click to delete leave"
-                }).MouseDown += (sender, args) => ApplyAction(String.Format("D{2}\"{0}\"{1} ", Entry.Carrier, WeekData.DayNames[Column - 2], (Type == LeaveCellType.Denied ? "D" : "L")));
+                }).MouseDown += (sender, args) => ApplyAction(String.Format("D{2}\"{0}\"{1} ", Entry.Carrier, Constants.DayNames[Column - 2], (Type == LeaveCellType.Denied ? "D" : "L")));
         }
 
         private TextBlock AddToCell(Grid To, int Column, int Row, TextBlock Control)
@@ -131,13 +124,14 @@ namespace LeaveWizard
 
         public IEnumerable<String> EnumerateAvailableSubs(LeaveEntry Leave, int Day)
         {
-            if (Leave.LeaveType == 'K' || Leave.LeaveType == 'J')
+            if (Leave.LeaveType == "K" || Leave.LeaveType == "J")
             {
                 yield return "3 - " + Leave.Carrier;
                 yield return "5 - " + Leave.Carrier;
+                yield return "R - " + Leave.Carrier;
             }
 
-            if (Leave.LeaveType == 'H') yield return "V - " + Leave.Carrier;
+            if (Leave.LeaveType == "H") yield return "V - " + Leave.Carrier;
 
             yield return "DUMMY";
 
@@ -250,8 +244,8 @@ namespace LeaveWizard
                     Text = (currentDay.IsHoliday ? "[clear holiday]" : "[make holiday]"),
                 }).MouseDown += (sender, args) =>
                     {
-                        if (currentDay.IsHoliday) ApplyAction(String.Format("DH{0} ", WeekData.DayNames[dayIndex]));
-                        else ApplyAction(String.Format("H{0} ", WeekData.DayNames[dayIndex]));
+                        if (currentDay.IsHoliday) ApplyAction(String.Format("DH{0} ", Constants.DayNames[dayIndex]));
+                        else ApplyAction(String.Format("H{0} ", Constants.DayNames[dayIndex]));
                     };
                 
                 var rowIndex = 0;
@@ -262,10 +256,10 @@ namespace LeaveWizard
                     if (reliefDay == null)
                         AddCell(MainGrid, "", x, rowIndex, "Click to add leave", () =>
                             {
-                                var leaveSelector = SimpleSelector.Show("Select leave type", WeekData.AllLeaveTypes.Select(c => (object)c));
+                                var leaveSelector = SimpleSelector.Show("Select leave type", Constants.AllLeaveTypes.Select(c => (object)c));
                                 if (leaveSelector.SelectionMade)
                                     ApplyAction(String.Format("L\"{0}\"{1}{2} ",
-                                        regular.Name, WeekData.DayNames[dayIndex], leaveSelector.SelectedItem));
+                                        regular.Name, Constants.DayNames[dayIndex], leaveSelector.SelectedItem));
                             });
                     else
                     {
@@ -284,13 +278,13 @@ namespace LeaveWizard
 
                 AddCell(MainGrid, "+ substitute leave", x, rowIndex, "Add leave for a substitute", () =>
                     {
-                        var leaveSelector = SimpleSelector.Show("Select leave type", WeekData.AllLeaveTypes.Select(c => (object)c));
+                        var leaveSelector = SimpleSelector.Show("Select leave type", Constants.AllLeaveTypes.Select(c => (object)c));
                         if (leaveSelector.SelectionMade)
                         {
                             var carrierSelector = SimpleSelector.Show("Select carrier", EnumerateAllCarriers().Select(c => (object)c));
                             if (carrierSelector.SelectionMade)
                                 ApplyAction(String.Format("L\"{0}\"{1}{2} ",
-                                    carrierSelector.SelectedItem, WeekData.DayNames[dayIndex], leaveSelector.SelectedItem));
+                                    carrierSelector.SelectedItem, Constants.DayNames[dayIndex], leaveSelector.SelectedItem));
                         }
                     });
                 rowIndex += 1;
@@ -312,13 +306,13 @@ namespace LeaveWizard
 
                 AddCell(MainGrid, "+ denied leave", x, rowIndex, "Add denied leave", () =>
                     {
-                        var leaveSelector = SimpleSelector.Show("Select leave type", WeekData.AllLeaveTypes.Select(c => (object)c));
+                        var leaveSelector = SimpleSelector.Show("Select leave type", Constants.AllLeaveTypes.Select(c => (object)c));
                         if (leaveSelector.SelectionMade)
                         {
                             var carrierSelector = SimpleSelector.Show("Select carrier", EnumerateAllCarriers().Select(c => (object)c));
                             if (carrierSelector.SelectionMade)
                                 ApplyAction(String.Format("LD\"{0}\"{1}{2} ",
-                                    carrierSelector.SelectedItem, WeekData.DayNames[dayIndex], leaveSelector.SelectedItem));
+                                    carrierSelector.SelectedItem, Constants.DayNames[dayIndex], leaveSelector.SelectedItem));
                         }
                     });
 

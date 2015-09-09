@@ -17,6 +17,7 @@
                 <RowDefinition Height="20" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -25,8 +26,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="18" />
             </Grid.ColumnDefinitions>
         </Grid>
 
@@ -36,7 +36,7 @@
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="200"/>
                     <ColumnDefinition />
                     <ColumnDefinition />
                     <ColumnDefinition />

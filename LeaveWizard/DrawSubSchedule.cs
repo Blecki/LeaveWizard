@@ -17,7 +17,7 @@ namespace LeaveWizard
         public static void DrawSubSchedule(PdfSharp.Drawing.XGraphics Graphics, WeekData Week)
         {
             var basicPen = XPens.Black;
-            var boldPen = new XPen(XColors.Black, 3);
+            var boldPen = new XPen(XColors.Black, 2);
             var font = new XFont("Times New Roman", 14, XFontStyle.Bold);
 
             var schedule = GenerateSubSchedule(Week);

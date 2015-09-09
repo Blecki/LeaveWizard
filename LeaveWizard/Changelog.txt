@@ -5,3 +5,4 @@ Fix failure to display + denied leave option.
 Fix assinging a substitute to two routes on the next week when a propogatable day assignment is changed.
 Add leave policy, and ability to modify it.
 Fix grid cells having wrong background color after changing weeks
+0.0.2 9-7-2015 Leave wizard dialog functional.

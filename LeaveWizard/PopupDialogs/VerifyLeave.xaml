@@ -9,6 +9,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="30" />
             <RowDefinition />
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
@@ -21,19 +22,22 @@
 
         <Label Content="End Date:" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <TextBox x:Name="EndInput" Grid.Row="2" HorizontalAlignment="Stretch" Margin="90,2,2,2" TextChanged="EndInput_TextChanged"/>
-
-        <Button Content="Analyze Leave" x:Name="AnalyzeButton" Click="AnalyzeButton_Click" HorizontalAlignment="Right" Grid.Row="3" Margin="2,2,2,2"/>
         
-        <ScrollViewer x:Name="LeaveDateView" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
+        <Label Content="Leave Type:" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <ComboBox x:Name="LeaveSelector" Grid.Row="3" Margin="90,2,2,2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEditable="False" />
+
+        <Button Content="Analyze Leave" x:Name="AnalyzeButton" Click="AnalyzeButton_Click" HorizontalAlignment="Right" Grid.Row="4" Margin="2,2,2,2"/>
+        
+        <ScrollViewer x:Name="LeaveDateView" Grid.Row="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="AnalysisGrid">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="120" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
             </Grid>
         </ScrollViewer>
         
-        <StackPanel Grid.Row="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal" >
+        <StackPanel Grid.Row="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal" >
             <Button x:Name="ApproveButton" Content="Approve" Click="ApproveButton_Click" Width="90" Margin="2,2,2,2" />
             <Button x:Name="DenyButton" Content="Deny" Click="DenyButton_Click" Width="90" Margin="2,2,2,2"/>
             <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Right" Click="CancelButton_Click" Width="90" Margin="2,2,2,2"/>

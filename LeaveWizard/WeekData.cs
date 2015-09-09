@@ -6,103 +6,14 @@ using System.Threading.Tasks;
 
 namespace LeaveWizard
 {
-    public enum DayOfWeek
-    {
-        Saturday = 0,
-        Sunday = 1,
-        Monday = 2,
-        Tuesday = 3,
-        Wednesday = 4, 
-        Thursday = 5,
-        Friday = 6
-    }
-
-    public class LeaveEntry
-    {
-        public char LeaveType = 'L';
-        public String Carrier = "DUMMY";
-        public String Substitute = "DUMMY";
-
-        public LeaveEntry CloneForNewWeek()
-        {
-            return new LeaveEntry { LeaveType = this.LeaveType, Carrier = this.Carrier, Substitute = this.Substitute };
-        }
-    }
-
     public class LeavePolicy
     {
         public int DaysPerSub;
         public int AmazonRoutes;
     }
 
-    public class RegularCarrier
-    {
-        public String Name = "DUMMY";
-        public int Route = 0;
-
-        public override string ToString()
-        {
-            return String.Format("R{0:000} {1}", Route, Name);
-        }
-    }
-
-    public class DailySchedule
-    {
-        public bool IsHoliday;
-        public List<LeaveEntry> ReliefDays = new List<LeaveEntry>();
-        public List<LeaveEntry> DeniedLeave = new List<LeaveEntry>();
-        public static String PropogatableLeaveTypes = "KJPVW";
-
-        public DailySchedule CloneForNewWeek()
-        {
-            return new DailySchedule
-            {
-                IsHoliday = false, //Holiday's are never propogated forward.
-                ReliefDays = new List<LeaveEntry>(this.ReliefDays.Where(rd => PropogatableLeaveTypes.Contains(rd.LeaveType)).Select(rd => rd.CloneForNewWeek()))
-            };
-        }
-    }
-
-    public class Substitute
-    {
-        public String Name;
-        public int[] Matrix = new int[3];
-
-        public override string ToString()
-        {
-            return String.Format("{0} [{1} {2} {3}]", 
-                Name, 
-                Matrix[0] == 0 ? "-" : Matrix[0].ToString(),
-                Matrix[1] == 0 ? "-" : Matrix[1].ToString(),
-                Matrix[2] == 0 ? "-" : Matrix[2].ToString());
-        }
-    }
-
     public class WeekData
     {
-        protected static DayOfWeek SAT = DayOfWeek.Saturday;
-        protected static DayOfWeek SUN = DayOfWeek.Sunday;
-        protected static DayOfWeek MON = DayOfWeek.Monday;
-        protected static DayOfWeek TUE = DayOfWeek.Tuesday;
-        protected static DayOfWeek WEN = DayOfWeek.Wednesday;
-        protected static DayOfWeek WED = DayOfWeek.Wednesday;
-        protected static DayOfWeek THU = DayOfWeek.Thursday;
-        protected static DayOfWeek FRI = DayOfWeek.Friday;
-        protected static char K = 'K';
-        protected static char J = 'J';
-        protected static char V = 'V';
-        protected static char A = 'A';
-        protected static char X = 'X';
-        protected static char R3 = '3';
-        protected static char R5 = '5';
-        protected static char R = 'R';
-        protected static char S = 'S';
-        protected static char P = 'P';
-        protected static char W = 'W';
-
-        public static char[] AllLeaveTypes = new char[] { 'A', 'S', 'K', 'J', 'V', 'X', '3', '5', 'R', 'P', 'W', 'L', 'E', 'H' };
-        public static String[] DayNames = new String[] { "SAT", "SUN", "MON", "TUE", "WED", "THU", "FRI" };
-        
         public int Year;
         public int PayPeriod;
         public int Week;
@@ -171,8 +82,8 @@ namespace LeaveWizard
                 for ( var day = 0; day < 7; ++day)
                 {
                     foreach (var rd in DailySchedules[day].ReliefDays)
-                        if (rd.LeaveType == 'J') PendingJDays.Add(Tuple.Create((DayOfWeek)day, rd));
-                    DailySchedules[day].ReliefDays.RemoveAll(rd => rd.LeaveType == 'J');
+                        if (rd.LeaveType == "J") PendingJDays.Add(Tuple.Create((DayOfWeek)day, rd));
+                    DailySchedules[day].ReliefDays.RemoveAll(rd => rd.LeaveType == "J");
                 }
 
                 if (PreviousWeek.PendingJDays != null)
@@ -217,7 +128,7 @@ namespace LeaveWizard
                         SkipWhitespace(iter);
                         var day = ParseDay(iter);
                         SkipWhitespace(iter);
-                        var type = (char)iter.Next;
+                        var type = ParseLeave(iter);
                         iter.Advance();
                         var leave = new LeaveEntry { Carrier = name, LeaveType = type, Substitute = "DUMMY" };
                         if (denied)
@@ -260,9 +171,11 @@ namespace LeaveWizard
                         var sub = ParseName(iter);
                         SkipWhitespace(iter);
                         var day = ParseDay(iter);
-                        if (sub == "DUMMY" || DailySchedules[(int)day].ReliefDays.Count(rd => rd.Substitute == sub) == 0)
+                        if (sub != "DUMMY")
                             foreach (var reliefDay in DailySchedules[(int)day].ReliefDays)
-                                if (reliefDay.Carrier == regular) reliefDay.Substitute = sub;
+                                if (reliefDay.Substitute == sub) reliefDay.Substitute = "DUMMY";
+                        foreach (var reliefDay in DailySchedules[(int)day].ReliefDays)
+                            if (reliefDay.Carrier == regular) reliefDay.Substitute = sub;
                     }
                     else if (iter.Next == 'H')
                     {
@@ -350,9 +263,9 @@ namespace LeaveWizard
                 Iter.Advance();
             }
 
-            for (int i = 0; i < DayNames.Length; ++i)
+            for (int i = 0; i < Constants.DayNames.Length; ++i)
             {
-                if (dayName == DayNames[i]) return (DayOfWeek)i;
+                if (dayName == Constants.DayNames[i]) return (DayOfWeek)i;
             }
 
             return DayOfWeek.Saturday;
@@ -396,6 +309,11 @@ namespace LeaveWizard
                 Iter.Advance();
         }
 
+        private bool IsWhitespace(StringIterator Iter)
+        {
+            return (Iter.Next == ' ' || Iter.Next == '\n' || Iter.Next == '\t' || Iter.Next == '\r');
+        }
+
         private int ParseRoute(StringIterator Iter)
         {
             var numberString = "";
@@ -420,6 +338,17 @@ namespace LeaveWizard
             return nameString;
         }
 
+        private string ParseLeave(StringIterator Iter)
+        {
+            var leave = "";
+            while (!Iter.AtEnd && !IsWhitespace(Iter))
+            {
+                leave += (char)Iter.Next;
+                Iter.Advance();
+            }
+            return leave;
+        }
+
         #endregion
 
         #region Mutator Funcs
@@ -439,8 +368,8 @@ namespace LeaveWizard
             else
                 previousDay = DailySchedules[(int)Day - 1];
 
-            foreach (var reliefDay in DailySchedules[(int)Day].ReliefDays.Where(rd => rd.LeaveType == 'K' || rd.LeaveType == 'J'))
-                previousDay.ReliefDays.Add(new LeaveEntry { LeaveType = 'H', Carrier = reliefDay.Carrier });
+            foreach (var reliefDay in DailySchedules[(int)Day].ReliefDays.Where(rd => rd.LeaveType == "K" || rd.LeaveType == "J"))
+                previousDay.ReliefDays.Add(new LeaveEntry { LeaveType = "H", Carrier = reliefDay.Carrier });
         }
 
         public void ClearHoliday(DayOfWeek Day)
@@ -458,7 +387,7 @@ namespace LeaveWizard
             else
                 previousDay = DailySchedules[(int)Day - 1];
 
-            previousDay.ReliefDays.RemoveAll(d => d.LeaveType == 'H');
+            previousDay.ReliefDays.RemoveAll(d => d.LeaveType == "H");
         }
 
 

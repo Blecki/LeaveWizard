@@ -62,6 +62,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CodeGenerator.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="DrawSubSchedule.cs" />
     <Compile Include="GenerateSubSchedule.cs" />
     <Compile Include="PopupDialogs\CodeWindow.xaml.cs">
@@ -87,12 +88,17 @@
       <DependentUpon>SimpleSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="StringIterator.cs" />
-    <Compile Include="VerifyLeave.xaml.cs">
+    <Compile Include="PopupDialogs\VerifyLeave.xaml.cs">
       <DependentUpon>VerifyLeave.xaml</DependentUpon>
     </Compile>
     <Compile Include="WeekChartDisplay.xaml.cs">
       <DependentUpon>WeekChartDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DayOfWeek.cs" />
+    <Compile Include="LeaveEntry.cs" />
+    <Compile Include="RegularCarrier.cs" />
+    <Compile Include="DailySchedule.cs" />
+    <Compile Include="Substitute.cs" />
     <Compile Include="WeekData.cs" />
     <Page Include="PopupDialogs\CodeWindow.xaml">
       <SubType>Designer</SubType>
@@ -134,7 +140,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VerifyLeave.xaml">
+    <Page Include="PopupDialogs\VerifyLeave.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
