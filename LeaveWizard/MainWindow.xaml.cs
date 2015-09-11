@@ -159,11 +159,6 @@ namespace LeaveWizard
             UpdateDisplay();
         }
 
-        private void GenCodeButton_Click(object sender, RoutedEventArgs e)
-        {
-            var codeWindow = CodeWindow.Show(CodeGenerator.GenerateChangeCode(PreviousWeek, CurrentWeek));
-        }
-
         private void ApplyChangeToCurrentWeek(String ChangeCommand)
         {
             CurrentWeek.ApplyChange(PreviousWeek, ChangeCommand);
@@ -178,7 +173,6 @@ namespace LeaveWizard
         private void AdminPasswordInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             var correctPassword = AdminPasswordInput.Text == "Stafford";
-            GenCodeButton.IsEnabled = correctPassword;
             ViewCodeButton.IsEnabled = correctPassword;
         }
 
@@ -210,6 +204,16 @@ namespace LeaveWizard
             wizard.ShowDialog();
 
             UpdateDisplay();
+        }
+
+        private void LeaveSummyButton_Click(object sender, RoutedEventArgs e)
+        {
+            PopupDialogs.AnalysisResultsView.Show(AnalyzeLeave.BasicAnalysis(Data));
+        }
+
+        private void LeaveAnalyzeCarrierButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
     }

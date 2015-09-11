@@ -33,7 +33,7 @@ namespace LeaveWizard
 
         public WeekData()
         {
-            for (int i = 0; i < 6; ++i) DailySchedules[i] = new DailySchedule();
+            for (int i = 0; i < 7; ++i) DailySchedules[i] = new DailySchedule();
             LeavePolicy = new LeavePolicy { DaysPerSub = 5, AmazonRoutes = 0 };
         }
 

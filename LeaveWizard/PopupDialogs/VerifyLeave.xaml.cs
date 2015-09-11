@@ -147,7 +147,7 @@ namespace LeaveWizard
                     HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
                     VerticalAlignment = System.Windows.VerticalAlignment.Center
                 };
-                if (day.Action == DayAction.Deny) message.Background = new SolidColorBrush(Colors.MediumVioletRed);
+                if (day.Action == DayAction.Deny) message.Background = new SolidColorBrush(Colors.LightPink);
                 Grid.SetRow(message, AnalysisGrid.RowDefinitions.Count - 1);
                 Grid.SetColumn(message, 1);
                 AnalysisGrid.Children.Add(message);
@@ -194,7 +194,7 @@ namespace LeaveWizard
                     commandQueue = "";
                 }
 
-                commandQueue += String.Format("L\"{0}\"{1}{2}", CarrierName, Constants.DayNames[day.Day], LeaveSelector.Text[0]);
+                commandQueue += String.Format("L\"{0}\"{1}{2}\n", CarrierName, Constants.DayNames[day.Day], LeaveSelector.Text);
             }
 
             ApplyCommand(currentWeek, commandQueue);
@@ -225,7 +225,7 @@ namespace LeaveWizard
                     commandQueue = "";
                 }
 
-                commandQueue += String.Format("LD\"{0}\"{1}{2}", CarrierName, Constants.DayNames[day.Day], LeaveSelector.Text[0]);
+                commandQueue += String.Format("LD\"{0}\"{1}{2}\n", CarrierName, Constants.DayNames[day.Day], LeaveSelector.Text);
             }
 
             ApplyCommand(currentWeek, commandQueue);

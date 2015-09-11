@@ -14,37 +14,48 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <local:WeekChartDisplay x:Name="WeekChart" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1" Grid.ColumnSpan="2"/>
+            
+            <local:WeekChartDisplay x:Name="WeekChart" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1"/>
 
-            <Label x:Name="WeekInfoLabel" Content="Label" ToolTip="Click to set Date and Payperiod" MouseDown="WeekInfoLabel_MouseDown" Grid.Row="0"/>
-            <Grid Grid.Column="1" Grid.Row="0">
-                <Button Content="&gt; NEXT WEEK &gt;" Margin="0,2,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="97" Click="NextWeek_Click"/>
-                <Button Content="&lt; PREV WEEK &lt;" Margin="0,2,181,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="107" Click="PrevWeek_Click"/>
-                <Button Content="&gt; NOW &lt;" Margin="0,2,112,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="64" Click="Now_Click"/>
-            </Grid>
-            <Label x:Name="SubCountInfoLineLabel" Content="Label" Margin="0" Grid.Row="2" Grid.ColumnSpan="2" Padding="5,0" MouseDown="SubCountInfoLineLabel_MouseDown"/>
-            <Grid Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="170"/>
-                    <ColumnDefinition Width="170"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Margin="2,2,2,2" x:Name="AdminPasswordInput" Grid.Column="0" Grid.Row="0" TextChanged="AdminPasswordInput_TextChanged"/>
-                <Button Margin="2,2,2,2" Content="GENERATE SUB SCHEDULE" VerticalAlignment="Top" HorizontalAlignment="Right" Width="166" Click="GenSchedule_Click" Grid.Column="2" Grid.Row="0" Height="22"/>
-                <Button Margin="2,2,2,2" Content="REBASE TO CURRENT WEEK" VerticalAlignment="Top" HorizontalAlignment="Right" Width="166" Click="Rebase_Click" Grid.Column="2" Grid.Row="1" Height="22"/>
-                <Button Content="VIEW CODE" Margin="2,2,2,2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="166" Grid.Column="0" Grid.Row="1" x:Name="ViewCodeButton" Click="ViewCodeButton_Click" Height="22" />
-                <Button Content="GEN CODE" Margin="2,2,2,2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="166" Grid.Column="1" Grid.Row="1" x:Name="GenCodeButton" Click="GenCodeButton_Click" Height="22" />
-                <Button Content="PRINT SUB SCHEDULE" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" x:Name="PrintSubScheduleButton" Margin="2,2,2,2" Click="PrintSubScheduleButton_Click"/>
-                <Button Content="LEAVE WIZARD" Margin="2,2,2,2" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="1" x:Name="LeaveWizardButton" Click="LeaveWizardButton_Click" />
-            </Grid>
+            
+            <StackPanel Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft">
+                <Button Content="&lt; Next Week &lt;" Click="NextWeek_Click" Margin="2,2,2,2"/>
+                <Button Content="&gt; Current Week &lt;" Click="Now_Click" Margin="2,2,2,2"/>
+                <Button Content="&gt; Previous Week &gt;" Click="PrevWeek_Click" Margin="2,2,2,2"/>
+            </StackPanel>
+
+            <Label x:Name="WeekInfoLabel" Grid.Row="0" Content="Label" ToolTip="Click to set Date and Payperiod" MouseDown="WeekInfoLabel_MouseDown" Margin="2,2,2,2" HorizontalAlignment="Left"/>
+
+            <Label x:Name="SubCountInfoLineLabel" Content="Label" Margin="5,2,2,2" Grid.Row="2" MouseDown="SubCountInfoLineLabel_MouseDown"/>
+            
+            <WrapPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2">
+                <GroupBox Header="Diagnostic">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Margin="2,2,2,2" Width="160" x:Name="AdminPasswordInput" TextChanged="AdminPasswordInput_TextChanged"/>
+                        <Button Content="View Code" Margin="2,2,2,2" x:Name="ViewCodeButton" Click="ViewCodeButton_Click" />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Schedule">
+                    <WrapPanel>
+                        <Button Margin="2,2,2,2" Content="Generate" Click="GenSchedule_Click"/>
+                        <Button Content="Print" x:Name="PrintSubScheduleButton" Margin="2,2,2,2" Click="PrintSubScheduleButton_Click"/>
+                    </WrapPanel>
+                </GroupBox>
+
+                <GroupBox Header="Admin">
+                    <WrapPanel>
+                        <Button Margin="2,2,2,2" Content="Rebase to Current Week" Click="Rebase_Click"/>
+                    </WrapPanel>
+                </GroupBox>
+
+                <GroupBox Header="Leave">
+                    <WrapPanel>
+                        <Button Content="Wizard" Margin="2,2,2,2" x:Name="LeaveWizardButton" Click="LeaveWizardButton_Click"/>
+                        <Button Content="Summary" Margin="2,2,2,2" x:Name="LeaveSummyButton" Click="LeaveSummyButton_Click"/>
+                        <Button Content="Analyze Carrier" Margin="2,2,2,2" x:Name="LeaveAnalyzeCarrierButton" Click="LeaveAnalyzeCarrierButton_Click"/>
+                    </WrapPanel>
+                </GroupBox>
+            </WrapPanel>
         </Grid>
     </DockPanel>
 </Window>

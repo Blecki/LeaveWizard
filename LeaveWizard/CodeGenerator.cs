@@ -63,7 +63,7 @@ namespace LeaveWizard
 
                     if (day.LeaveType != "H") // H days should only exist as a result of a future holiday.
                     {
-                        if (DailySchedule.PropogatableLeaveTypes.Contains(day.LeaveType))
+                        if (Constants.PropogatableLeaveTypes.Contains(day.LeaveType))
                         {
                             var existingPropogatableDay = Start.DailySchedules[i].ReliefDays.Find(l => l.Carrier == day.Carrier && l.LeaveType == day.LeaveType);
 
@@ -90,7 +90,7 @@ namespace LeaveWizard
                         result.AppendFormat("A\"{0}\"\"{1}\"{2}\n", day.Carrier, day.Substitute, Constants.DayNames[i]);
                 }
 
-                foreach (var day in Start.DailySchedules[i].ReliefDays.Where(r => DailySchedule.PropogatableLeaveTypes.Contains(r.LeaveType)))
+                foreach (var day in Start.DailySchedules[i].ReliefDays.Where(r => Constants.PropogatableLeaveTypes.Contains(r.LeaveType)))
                 {
                     var existingDay = End.DailySchedules[i].ReliefDays.Find(l => l.Carrier == day.Carrier && l.LeaveType == day.LeaveType);
                     if (existingDay == null)

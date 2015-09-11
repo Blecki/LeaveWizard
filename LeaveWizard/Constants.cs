@@ -27,5 +27,7 @@ namespace LeaveWizard
         };
 
         public static String[] DayNames = new String[] { "SAT", "SUN", "MON", "TUE", "WED", "THU", "FRI" };
+
+        public static String PropogatableLeaveTypes = "KJPVW";
     }
 }

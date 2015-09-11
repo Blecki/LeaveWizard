@@ -61,12 +61,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AnalyzeLeave.cs" />
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DrawSubSchedule.cs" />
     <Compile Include="GenerateSubSchedule.cs" />
+    <Compile Include="LeaveAnalysisResults.cs" />
     <Compile Include="PopupDialogs\CodeWindow.xaml.cs">
       <DependentUpon>CodeWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PopupDialogs\AnalysisResultsView.xaml.cs">
+      <DependentUpon>AnalysisResultsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="PopupDialogs\ModifyBaseData.xaml.cs">
       <DependentUpon>ModifyBaseData.xaml</DependentUpon>
@@ -101,6 +106,10 @@
     <Compile Include="Substitute.cs" />
     <Compile Include="WeekData.cs" />
     <Page Include="PopupDialogs\CodeWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PopupDialogs\AnalysisResultsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
