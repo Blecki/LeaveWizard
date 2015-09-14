@@ -51,7 +51,7 @@
                 <GroupBox Header="Leave">
                     <WrapPanel>
                         <Button Content="Wizard" Margin="2,2,2,2" x:Name="LeaveWizardButton" Click="LeaveWizardButton_Click"/>
-                        <Button Content="Summary" Margin="2,2,2,2" x:Name="LeaveSummyButton" Click="LeaveSummyButton_Click"/>
+                        <Button Content="Analyze" Margin="2,2,2,2" x:Name="LeaveSummyButton" Click="LeaveSummyButton_Click"/>
                     </WrapPanel>
                 </GroupBox>
             </WrapPanel>
