@@ -8,7 +8,7 @@ namespace LeaveWizard
     public class LeaveAnalysisRow
     {
         public String Name;
-        public Dictionary<String, int> Columns = new Dictionary<string, int>();
+        public Dictionary<String, String> Columns = new Dictionary<String, String>();
     }
 
     public class LeaveAnalysisResults

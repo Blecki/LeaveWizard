@@ -7,43 +7,43 @@ namespace LeaveWizard.AnalysisReports
 {
     public class LeaveSummary : LeaveAnalysis
     {
-        public override string ReportName
+        public LeaveSummary(LeaveChart Chart) : base(Chart)
         {
-            get
-            {
-                return "Leave Summary";
-            }
+            this.ReportName = "Leave Summary";
         }
 
         public override LeaveAnalysisResults Analyze(LeaveChart Chart)
         {
+            var usageTable = new Dictionary<String, Dictionary<String, int>>();
+
+            foreach (var leaveEntry in Chart.EnumerateLeave(StartDate, EndDate).Where(l => !Constants.PropogatableLeaveTypes.Contains(l.LeaveType)))
+            {
+                Dictionary<String, int> carrierEntry = null;
+                if (!usageTable.TryGetValue(leaveEntry.Carrier, out carrierEntry))
+                {
+                    carrierEntry = new Dictionary<string, int>();
+                    usageTable.Add(leaveEntry.Carrier, carrierEntry);
+                }
+
+                if (carrierEntry.ContainsKey(leaveEntry.LeaveType))
+                    carrierEntry[leaveEntry.LeaveType] += 1;
+                else
+                    carrierEntry.Add(leaveEntry.LeaveType, 1);
+            }
+
             var result = new LeaveAnalysisResults();
             result.ColumnNames.Add("Carrier");
 
-            for (var weekIndex = 0; weekIndex < Chart.Weeks.Count; ++weekIndex)
+            foreach (var carrierEntry in usageTable)
             {
-                var previousWeek = weekIndex == 0 ? null : Chart.Weeks[weekIndex - 1];
-                Chart.Weeks[weekIndex].Propogate(previousWeek);
-
-                for (var dayIndex = 0; dayIndex < 7; ++dayIndex)
-                    foreach (var leaveEntry in Chart.Weeks[weekIndex].DailySchedules[dayIndex].ReliefDays)
-                        if (!Constants.PropogatableLeaveTypes.Contains(leaveEntry.LeaveType))
-                        {
-                            var carrierEntry = result.Rows.Find(c => c.Name == leaveEntry.Carrier);
-                            if (carrierEntry == null)
-                            {
-                                carrierEntry = new LeaveAnalysisRow { Name = leaveEntry.Carrier };
-                                result.Rows.Add(carrierEntry);
-                            }
-
-                            if (!result.ColumnNames.Contains(leaveEntry.LeaveType))
-                                result.ColumnNames.Add(leaveEntry.LeaveType);
-
-                            if (carrierEntry.Columns.ContainsKey(leaveEntry.LeaveType))
-                                carrierEntry.Columns[leaveEntry.LeaveType] += 1;
-                            else
-                                carrierEntry.Columns.Add(leaveEntry.LeaveType, 1);
-                        }
+                var row = new LeaveAnalysisRow { Name = carrierEntry.Key };
+                foreach (var leaveType in carrierEntry.Value)
+                {
+                    if (!result.ColumnNames.Contains(leaveType.Key))
+                        result.ColumnNames.Add(leaveType.Key);
+                    row.Columns.Add(leaveType.Key, leaveType.Value.ToString());
+                }
+                result.Rows.Add(row);
             }
 
             return result;

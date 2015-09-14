@@ -20,23 +20,22 @@ namespace LeaveWizard.PopupDialogs
         public AnalysisResultsView()
         {
             InitializeComponent();
-
-            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
-            {
-                if (type.IsSubclassOf(typeof(LeaveAnalysis)))
-                {
-                    ReportSelectorComboBox.Items.Add(Activator.CreateInstance(type));
-                }
-            }
-
-            ReportSelectorComboBox.SelectedIndex = 0;
         }
 
         public static void Show(LeaveChart Chart)
         {
             var popup = new AnalysisResultsView();
             popup.Chart = Chart;
-            popup.ShowDialog();
+
+            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (type.IsSubclassOf(typeof(LeaveAnalysis)))
+                {
+                    popup.ReportSelectorComboBox.Items.Add(Activator.CreateInstance(type, Chart));
+                }
+            }
+
+            popup.ReportSelectorComboBox.SelectedIndex = 0; popup.ShowDialog();
         }
 
         private void PopulateData(LeaveAnalysisResults AnalysisResults)
@@ -46,7 +45,6 @@ namespace LeaveWizard.PopupDialogs
             DataGrid.Children.Clear();
 
             DataGrid.RowDefinitions.Add(new RowDefinition());
-            DataGrid.ColumnDefinitions.Add(new ColumnDefinition());
 
             for (var c = 0; c < AnalysisResults.ColumnNames.Count; ++c)
             {
@@ -64,8 +62,8 @@ namespace LeaveWizard.PopupDialogs
                 {
                     var columnIndex = AnalysisResults.ColumnNames.IndexOf(column.Key);
                     if (columnIndex < 0) continue;
-                    AddValue(column.Value.ToString(), DataGrid.RowDefinitions.Count - 1,
-                        columnIndex + 1);
+                    AddValue(column.Value, DataGrid.RowDefinitions.Count - 1,
+                        columnIndex);
                 }
             }
 
