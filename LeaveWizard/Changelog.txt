@@ -6,3 +6,6 @@ Fix assinging a substitute to two routes on the next week when a propogatable da
 Add leave policy, and ability to modify it.
 Fix grid cells having wrong background color after changing weeks
 0.0.2 9-7-2015 Leave wizard dialog functional.
+0.0.3 9-12-2015 Rearrange bottom button pane
+Add leave analysis reports
+Clean up temporary files on exit

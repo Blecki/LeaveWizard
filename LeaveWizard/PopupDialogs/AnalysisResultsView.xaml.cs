@@ -15,48 +15,64 @@ namespace LeaveWizard.PopupDialogs
 {
     public partial class AnalysisResultsView : Window
     {
+        private LeaveChart Chart;
+
         public AnalysisResultsView()
         {
             InitializeComponent();
-        }
 
-        public static void Show(LeaveAnalysisResults AnalysisResults)
-        {
-            var popup = new AnalysisResultsView();
-            var columnHeaders = new List<String>();
-
-            foreach (var line in AnalysisResults)
+            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
             {
-                popup.DataGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength() });
-                AddValue(line.Carrier, popup.DataGrid.RowDefinitions.Count - 1, 0, popup.DataGrid);
-                
-                foreach (var leaveType in line.LeaveUsage)
+                if (type.IsSubclassOf(typeof(LeaveAnalysis)))
                 {
-                    var columnIndex = columnHeaders.IndexOf(leaveType.Key);
-                    if (columnIndex < 0)
-                    {
-                        columnIndex = columnHeaders.Count;
-                        columnHeaders.Add(leaveType.Key);
-                    }
-
-                    AddValue(leaveType.Value.ToString(), popup.DataGrid.RowDefinitions.Count - 1,
-                        columnIndex + 1, popup.DataGrid);
+                    ReportSelectorComboBox.Items.Add(Activator.CreateInstance(type));
                 }
             }
 
-            for (var columnIndex = 0; columnIndex < columnHeaders.Count; ++columnIndex)
-            {
-                popup.DataGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                var block = AddValue(columnHeaders[columnIndex], 0, columnIndex + 1, popup.DataGrid);
-                block.LayoutTransform = new RotateTransform(90);
-            }
+            ReportSelectorComboBox.SelectedIndex = 0;
+        }
 
-            popup.UpdateLayout();
-
+        public static void Show(LeaveChart Chart)
+        {
+            var popup = new AnalysisResultsView();
+            popup.Chart = Chart;
             popup.ShowDialog();
         }
 
-        private static TextBlock AddValue(String Value, int Row, int Column, Grid To)
+        private void PopulateData(LeaveAnalysisResults AnalysisResults)
+        {
+            DataGrid.RowDefinitions.Clear();
+            DataGrid.ColumnDefinitions.Clear();
+            DataGrid.Children.Clear();
+
+            DataGrid.RowDefinitions.Add(new RowDefinition());
+            DataGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
+            for (var c = 0; c < AnalysisResults.ColumnNames.Count; ++c)
+            {
+                DataGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                var block = AddValue(AnalysisResults.ColumnNames[c], 0, c);
+                block.LayoutTransform = new RotateTransform(90);
+            }
+
+            foreach (var line in AnalysisResults.Rows)
+            {
+                DataGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength() });
+                AddValue(line.Name, DataGrid.RowDefinitions.Count - 1, 0);
+
+                foreach (var column in line.Columns)
+                {
+                    var columnIndex = AnalysisResults.ColumnNames.IndexOf(column.Key);
+                    if (columnIndex < 0) continue;
+                    AddValue(column.Value.ToString(), DataGrid.RowDefinitions.Count - 1,
+                        columnIndex + 1);
+                }
+            }
+
+            UpdateLayout();
+        }
+
+        private TextBlock AddValue(String Value, int Row, int Column)
         {
             var block = new TextBlock
             {
@@ -69,8 +85,20 @@ namespace LeaveWizard.PopupDialogs
             Grid.SetColumn(block, Column);
             Grid.SetRow(block, Row);
 
-            To.Children.Add(block);
+            DataGrid.Children.Add(block);
             return block;
+        }
+
+        private void AnalyzeButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedReport = ReportSelectorComboBox.SelectedItem as LeaveAnalysis;
+            PopulateData(selectedReport.Analyze(Chart));
+        }
+
+        private void ReportSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedReport = ReportSelectorComboBox.SelectedItem as LeaveAnalysis;
+            AnalysisProperties.SelectedObject = selectedReport;
         }
     }
 }

@@ -119,6 +119,15 @@ namespace LeaveWizard
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!EmergencyClose) Data.SaveData();
+
+            try
+            {
+                if (System.IO.Directory.Exists(System.Environment.CurrentDirectory + "/temp")) System.IO.Directory.Delete(System.Environment.CurrentDirectory + "/temp", true);
+            }
+            catch (Exception x)
+            {
+                //One or more schedules must be open. Don't worry about it.
+            }
         }
 
         private void GenSchedule_Click(object sender, RoutedEventArgs e)
@@ -178,7 +187,8 @@ namespace LeaveWizard
 
         private void PrintSubScheduleButton_Click(object sender, RoutedEventArgs e)
         {
-            string filename = Guid.NewGuid().ToString().ToUpper() + ".pdf";
+            if (!System.IO.Directory.Exists(System.Environment.CurrentDirectory + "/temp")) System.IO.Directory.CreateDirectory(System.Environment.CurrentDirectory + "/temp");
+            string filename = System.Environment.CurrentDirectory + "/temp/" + Guid.NewGuid().ToString().ToUpper() + ".pdf";
             var document = new PdfSharp.Pdf.PdfDocument(filename);
             document.Info.Creator = "Schedule";
             var page = document.AddPage();
@@ -208,7 +218,7 @@ namespace LeaveWizard
 
         private void LeaveSummyButton_Click(object sender, RoutedEventArgs e)
         {
-            PopupDialogs.AnalysisResultsView.Show(AnalyzeLeave.BasicAnalysis(Data));
+            PopupDialogs.AnalysisResultsView.Show(Data);
         }
 
         private void LeaveAnalyzeCarrierButton_Click(object sender, RoutedEventArgs e)

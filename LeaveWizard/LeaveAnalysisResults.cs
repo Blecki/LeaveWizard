@@ -5,13 +5,15 @@ using System.Text;
 
 namespace LeaveWizard
 {
-    public class LeaveAnalysisEntry
+    public class LeaveAnalysisRow
     {
-        public String Carrier;
-        public Dictionary<String, int> LeaveUsage = new Dictionary<string, int>();
+        public String Name;
+        public Dictionary<String, int> Columns = new Dictionary<string, int>();
     }
 
-    public class LeaveAnalysisResults : List<LeaveAnalysisEntry>
+    public class LeaveAnalysisResults
     {
+        public List<String> ColumnNames = new List<string>();
+        public List<LeaveAnalysisRow> Rows = new List<LeaveAnalysisRow>();
     }
 }

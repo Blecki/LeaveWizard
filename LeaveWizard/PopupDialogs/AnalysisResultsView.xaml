@@ -3,19 +3,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:LeaveWizard.PopupDialogs"
         mc:Ignorable="d"
         Title="Leave Analysis" Height="500" Width="500" >
-    <ScrollViewer>
-        <Grid x:Name="DataGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowGridLines="True">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-               
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="160" />
-            </Grid.ColumnDefinitions>
-            <Label Content="Carrier" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Grid>
-    </ScrollViewer>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ComboBox x:Name="ReportSelectorComboBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="ReportSelectorComboBox_SelectionChanged" DisplayMemberPath="ReportName" />
+        <xctk:PropertyGrid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="AnalysisProperties">
+        </xctk:PropertyGrid>
+        <Button x:Name="AnalyzeButton" Content="Analyze" Click="AnalyzeButton_Click" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+        <ScrollViewer Grid.Row="2" Grid.ColumnSpan="2">
+            <Grid x:Name="DataGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowGridLines="True" />
+        </ScrollViewer>
+    </Grid>
 </Window>
