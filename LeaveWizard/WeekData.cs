@@ -256,19 +256,20 @@ namespace LeaveWizard
         private void PrepareSundayRoutes()
         {
             for (var d = 0; d < 7; ++d)
-            {
                 if (d == 1 || DailySchedules[d].IsHoliday)
-                {
-                    DailySchedules[d].ReliefDays.RemoveAll(rd => rd.LeaveType == "SUNDAY");
+                    PrepareSundayRoutesSingleDay(d);
+        }
 
-                    for (var i = 0; i < LeavePolicy.AmazonRoutes; ++i)
-                        DailySchedules[d].ReliefDays.Add(new LeaveEntry
-                        {
-                            LeaveType = "SUNDAY",
-                            Carrier = String.Format("L{0:000}", i + 1)
-                        });
-                }
-            }
+        private void PrepareSundayRoutesSingleDay(int d)
+        {
+            DailySchedules[d].ReliefDays.RemoveAll(rd => rd.LeaveType == "SUNDAY");
+
+            for (var i = 0; i < LeavePolicy.AmazonRoutes; ++i)
+                DailySchedules[d].ReliefDays.Add(new LeaveEntry
+                {
+                    LeaveType = "SUNDAY",
+                    Carrier = String.Format("L{0:000}", i + 1)
+                });
         }
 
         public void ApplyChange(WeekData PreviousWeek, String Command)
@@ -397,6 +398,8 @@ namespace LeaveWizard
 
             foreach (var reliefDay in DailySchedules[(int)Day].ReliefDays.Where(rd => rd.LeaveType == "K" || rd.LeaveType == "J"))
                 previousDay.ReliefDays.Add(new LeaveEntry { LeaveType = "H", Carrier = reliefDay.Carrier });
+
+            PrepareSundayRoutesSingleDay((int)Day);
         }
 
         public void ClearHoliday(DayOfWeek Day)

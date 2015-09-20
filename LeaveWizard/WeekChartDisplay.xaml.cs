@@ -286,6 +286,13 @@ namespace LeaveWizard
                         AddCell(MainGrid, "", x, rowIndex, null);
                         rowIndex += 1;
                     }
+
+                    foreach (var regular in Week.Regulars)
+                    {
+                        var reliefDay = localReliefDays.Find(r => r.Carrier == regular.Name);
+                        if (reliefDay != null)
+                            localReliefDays.Remove(reliefDay);
+                    }
                 }
                 else
                 {

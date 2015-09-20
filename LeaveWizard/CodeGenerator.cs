@@ -57,6 +57,8 @@ namespace LeaveWizard
 
             for (int i = 6; i >= 0; --i)
             {
+                string sundayRouteAssignments = "";
+
                 foreach (var day in End.DailySchedules[i].ReliefDays)
                 {
                     bool subAssigned = false;
@@ -91,7 +93,12 @@ namespace LeaveWizard
                     }
 
                     if (!subAssigned && day.Substitute != "DUMMY")
-                        result.Append(Assign(day.Carrier, day.Substitute, i));
+                    {
+                        if (day.LeaveType == "SUNDAY")
+                            sundayRouteAssignments += Assign(day.Carrier, day.Substitute, i);
+                        else
+                            result.Append(Assign(day.Carrier, day.Substitute, i));
+                    }
                 }
 
                 foreach (var day in Start.DailySchedules[i].ReliefDays.Where(r => Constants.PropogatableLeaveTypes.Contains(r.LeaveType)))
@@ -103,6 +110,8 @@ namespace LeaveWizard
 
                 if (End.DailySchedules[i].IsHoliday)
                     result.Append(Holiday(i));
+
+                result.Append(sundayRouteAssignments);
 
                 foreach (var day in End.DailySchedules[i].DeniedLeave)
                     result.Append(DeniedLeave(day.Carrier, i, day.LeaveType));
