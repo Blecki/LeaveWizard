@@ -23,8 +23,9 @@ namespace LeaveWizard
     public partial class MainWindow : Window
     {
         LeaveChart Data;
-        WeekData CurrentWeek { get { return Data.Weeks[Data.CurrentWeek]; } }
-        WeekData PreviousWeek { get { return Data.CurrentWeek == 0 ? null : Data.Weeks[Data.CurrentWeek - 1]; } }
+        int CurrentWeekIndex = 0;
+        WeekData CurrentWeek { get { return Data.Weeks[CurrentWeekIndex]; } }
+        WeekData PreviousWeek { get { return CurrentWeekIndex == 0 ? null : Data.Weeks[CurrentWeekIndex - 1]; } }
         bool EmergencyClose = false;
                 
         public MainWindow()
@@ -47,16 +48,18 @@ namespace LeaveWizard
             WeekChart.ApplyAction += ApplyChangeToCurrentWeek;
 
             AdminPasswordInput_TextChanged(null, null);
+
+            Now_Click(null, null);
         }
 
         private void UpdateData()
         {
             CurrentWeek.Propogate(PreviousWeek);
 
-            if (Data.CurrentWeek < Data.Weeks.Count - 1 && Data.Weeks[Data.CurrentWeek + 1].DailySchedules[0].IsHoliday)
+            if (CurrentWeekIndex < Data.Weeks.Count - 1 && Data.Weeks[CurrentWeekIndex + 1].DailySchedules[0].IsHoliday)
             {
-                Data.Weeks[Data.CurrentWeek + 1].Propogate(CurrentWeek);
-                Data.Weeks[Data.CurrentWeek + 1].Holiday(0);
+                Data.Weeks[CurrentWeekIndex + 1].Propogate(CurrentWeek);
+                Data.Weeks[CurrentWeekIndex + 1].Holiday(0);
             }
         }
 
@@ -64,24 +67,24 @@ namespace LeaveWizard
         {
             UpdateData();
 
-            WeekInfoLabel.Content = String.Format("PayPeriod {0}, Week {1}", Data.Weeks[Data.CurrentWeek].PayPeriod, Data.Weeks[Data.CurrentWeek].Week);
+            WeekInfoLabel.Content = String.Format("PayPeriod {0}, Week {1}", Data.Weeks[CurrentWeekIndex].PayPeriod, Data.Weeks[CurrentWeekIndex].Week);
 
-            var numSubs = Data.Weeks[Data.CurrentWeek].Substitutes.Count;
-            var sumLeaveDays = Data.Weeks[Data.CurrentWeek].SumLeaveDays();
+            var numSubs = Data.Weeks[CurrentWeekIndex].Substitutes.Count;
+            var sumLeaveDays = Data.Weeks[CurrentWeekIndex].SumLeaveDays();
 
 
             SubCountInfoLineLabel.Content = String.Format("Number of subs: {0}  Days per sub: {1} Amazon Routes: {2}  Leave days: {3}  Days still schedulable: {4}", numSubs, CurrentWeek.LeavePolicy.DaysPerSub, CurrentWeek.LeavePolicy.AmazonRoutes, sumLeaveDays, (numSubs * CurrentWeek.LeavePolicy.DaysPerSub) - (sumLeaveDays));
 
-            WeekChart.DisplayWeek(Data.Weeks[Data.CurrentWeek]);
+            WeekChart.DisplayWeek(Data.Weeks[CurrentWeekIndex]);
             this.InvalidateVisual();
         }
 
         private void PrevWeek_Click(object sender, RoutedEventArgs e)
         {
-            if (Data.CurrentWeek == 0) System.Console.Beep();
+            if (CurrentWeekIndex == 0) System.Console.Beep();
             else
             {
-                Data.CurrentWeek = Data.CurrentWeek - 1;
+                CurrentWeekIndex = CurrentWeekIndex - 1;
                 UpdateDisplay();
             }
         }
@@ -96,12 +99,12 @@ namespace LeaveWizard
                 if (result == MessageBoxResult.No) return;
             }
 
-            Data.CurrentWeek = 0;
+            CurrentWeekIndex = 0;
 
-            while (Data.Weeks[Data.CurrentWeek].SaturdayDate + TimeSpan.FromDays(7) < DateTime.Now)
+            while (Data.Weeks[CurrentWeekIndex].SaturdayDate + TimeSpan.FromDays(7) < DateTime.Now)
             {
-                if (Data.CurrentWeek == Data.Weeks.Count - 1) break;
-                Data.CurrentWeek += 1;
+                if (CurrentWeekIndex == Data.Weeks.Count - 1) break;
+                CurrentWeekIndex += 1;
                 CurrentWeek.Propogate(PreviousWeek);
             }
 
@@ -110,9 +113,9 @@ namespace LeaveWizard
 
         private void NextWeek_Click(object sender, RoutedEventArgs e)
         {
-            if (Data.CurrentWeek == Data.Weeks.Count - 1)
+            if (CurrentWeekIndex == Data.Weeks.Count - 1)
                 Data.Weeks.Add(new WeekData());
-            Data.CurrentWeek = Data.CurrentWeek + 1;
+            CurrentWeekIndex = CurrentWeekIndex + 1;
             UpdateDisplay();
         }
 
@@ -150,21 +153,21 @@ namespace LeaveWizard
             if (CurrentWeek.SaturdayDate > DateTime.Now)
                 if (MessageBox.Show("The currently displayed week is in the future. Rebasing will erase all data before this future date. You will not be able to recover it. Are you sure you want to do this?", "Confirm Really Dangerous Operation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
 
-            if (Data.CurrentWeek == 0) return; //Nothing to remove.
+            if (CurrentWeekIndex == 0) return; //Nothing to remove.
 
             var genCode = CodeGenerator.GenerateChangeCode(null, CurrentWeek);
             CurrentWeek.EffectiveChanges = genCode;
 
-            Data.Weeks.RemoveRange(0, Data.CurrentWeek);
-            Data.CurrentWeek = 0;
+            Data.Weeks.RemoveRange(0, CurrentWeekIndex);
+            CurrentWeekIndex = 0;
 
             UpdateDisplay();
         }
 
         private void ViewCodeButton_Click(object sender, RoutedEventArgs e)
         {
-            var codeWindow = CodeWindow.Show(Data.Weeks[Data.CurrentWeek].EffectiveChanges);
-            Data.Weeks[Data.CurrentWeek].EffectiveChanges = codeWindow.Text;
+            var codeWindow = CodeWindow.Show(Data.Weeks[CurrentWeekIndex].EffectiveChanges);
+            Data.Weeks[CurrentWeekIndex].EffectiveChanges = codeWindow.Text;
             UpdateDisplay();
         }
 

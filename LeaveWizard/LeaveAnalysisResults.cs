@@ -15,5 +15,10 @@ namespace LeaveWizard
     {
         public List<String> ColumnNames = new List<string>();
         public List<LeaveAnalysisRow> Rows = new List<LeaveAnalysisRow>();
+
+        public void SortRowsAlphabetically()
+        {
+            Rows = new List<LeaveAnalysisRow>(Rows.OrderBy(r => r.Name));
+        }
     }
 }

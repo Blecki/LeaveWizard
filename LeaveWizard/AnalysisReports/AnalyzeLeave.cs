@@ -10,6 +10,7 @@ namespace LeaveWizard.AnalysisReports
         public LeaveSummary(LeaveChart Chart) : base(Chart)
         {
             this.ReportName = "Leave Summary";
+            this.Summary = "Summarizes leave usage for entire office.";
         }
 
         public override LeaveAnalysisResults Analyze(LeaveChart Chart)

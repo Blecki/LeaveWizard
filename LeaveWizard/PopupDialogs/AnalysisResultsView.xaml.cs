@@ -16,10 +16,13 @@ namespace LeaveWizard.PopupDialogs
     public partial class AnalysisResultsView : Window
     {
         private LeaveChart Chart;
+        private Brush DefaultBackground;
+        private Brush ErrorBackground = new SolidColorBrush(Colors.Red);
 
         public AnalysisResultsView()
         {
             InitializeComponent();
+            DefaultBackground = ReportSelectorComboBox.Background;
         }
 
         public static void Show(LeaveChart Chart)
@@ -96,7 +99,59 @@ namespace LeaveWizard.PopupDialogs
         private void ReportSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedReport = ReportSelectorComboBox.SelectedItem as LeaveAnalysis;
-            AnalysisProperties.SelectedObject = selectedReport;
+            ReportSummaryText.Text = selectedReport.Summary;
+
+            ReportPropertyGrid.RowDefinitions.Clear();
+            ReportPropertyGrid.Children.Clear();
+            foreach (var property in selectedReport.GetType().GetProperties())
+            {
+                if (property.CanRead && property.CanWrite)
+                {
+                    var foundIgnoreAttribute = false;
+                    foreach (var attribute in property.GetCustomAttributes(false))
+                        if (attribute.GetType() == typeof(IgnorwAnalysisPropertyAttribute))
+                            foundIgnoreAttribute = true;
+                    if (foundIgnoreAttribute) continue;
+
+                    AnalysisPropertyConverter converter = null;
+                    foreach (var attribute in property.GetCustomAttributes(false))
+                        if (attribute.GetType() == typeof(AnalysisPropertyConverterAttribute))
+                            converter = (attribute as AnalysisPropertyConverterAttribute).MakeConverter();
+                    if (converter == null) converter = new GenericConverter(property.PropertyType);
+
+                    var lambdaProperty = property;
+                    ReportPropertyGrid.RowDefinitions.Add(new RowDefinition());
+
+                    var propLabel = new Label { Content = property.Name };
+                    Grid.SetRow(propLabel, ReportPropertyGrid.RowDefinitions.Count - 1);
+                    Grid.SetColumn(propLabel, 0);
+                    ReportPropertyGrid.Children.Add(propLabel);
+
+                    var propEditBox = new TextBox { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
+                    Grid.SetRow(propEditBox, ReportPropertyGrid.RowDefinitions.Count - 1);
+                    Grid.SetColumn(propEditBox, 1);
+                    ReportPropertyGrid.Children.Add(propEditBox);
+
+                    DefaultBackground = propEditBox.Background;
+
+                    propEditBox.Text = converter.ConvertToString(property.GetValue(selectedReport, null));
+
+                    propEditBox.TextChanged += (_sender, _args) =>
+                    {
+                        var value = propEditBox.Text;
+                        try
+                        {
+                            var newValue = converter.ConvertFromString(value);
+                            lambdaProperty.SetValue(selectedReport, newValue, null);
+                            propEditBox.Background = DefaultBackground;
+                        }
+                        catch (Exception xp)
+                        {
+                            propEditBox.Background = ErrorBackground;
+                        }
+                    };
+                }
+            }
         }
     }
 }

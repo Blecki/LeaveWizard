@@ -23,7 +23,8 @@ namespace LeaveWizard
             "USL",
             "UEA",
             "AWOL",
-            "ULWOP"
+            "ULWOP",
+            "TRNG"
         };
 
         public static String[] DayNames = new String[] { "SAT", "SUN", "MON", "TUE", "WED", "THU", "FRI" };

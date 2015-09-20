@@ -135,7 +135,7 @@ namespace LeaveWizard
 
             yield return "DUMMY";
 
-            foreach (var sub in CurrentWeek.Substitutes.Where(s => CurrentWeek.DailySchedules[Day].ReliefDays.Find(d => d.Substitute == s.Name) == null))
+            foreach (var sub in CurrentWeek.Substitutes.Where(s => CurrentWeek.DailySchedules[Day].ReliefDays.Find(d => d.Substitute == s.Name) == null).Where(s => CurrentWeek.DailySchedules[Day].ReliefDays.Find(d => d.Carrier == s.Name) == null))
                 yield return sub.Name;
         }
 

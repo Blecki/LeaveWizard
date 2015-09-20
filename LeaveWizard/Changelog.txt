@@ -9,3 +9,8 @@ Fix grid cells having wrong background color after changing weeks
 0.0.3 9-12-2015 Rearrange bottom button pane
 Add leave analysis reports
 Clean up temporary files on exit
+0.0.4 9-15-2015 Preserve seniority order in substitutes
+Open to current week
+Add 'trng' leave type
+Don't list subs in assignment list if they are on leave
+Don't propogate sub route assignment if sub is on leave

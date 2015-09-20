@@ -26,6 +26,8 @@ namespace LeaveWizard
             result.Subs = new List<SubRow>();
             result.OpenRoutes = new List<List<String>>();
             for (int i = 0; i < 7; ++i) result.OpenRoutes.Add(new List<String>());
+            foreach (var sub in Week.Substitutes)
+                result.Subs.Add(new SubRow { Name = sub.Name });
 
             for (var day = 0; day < 7; ++day)
                 foreach (var leaveEntry in Week.DailySchedules[day].ReliefDays)
@@ -62,7 +64,7 @@ namespace LeaveWizard
                     }
                 }
 
-            result.Subs = new List<SubRow>(result.Subs.OrderBy(r => r.Name));
+            //result.Subs = new List<SubRow>(result.Subs.OrderBy(r => r.Name));
             return result;
         }
        

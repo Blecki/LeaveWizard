@@ -10,18 +10,29 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="ReportSelectorComboBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="ReportSelectorComboBox_SelectionChanged" DisplayMemberPath="ReportName" />
-        <xctk:PropertyGrid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="AnalysisProperties">
-        </xctk:PropertyGrid>
-        <Button x:Name="AnalyzeButton" Content="Analyze" Click="AnalyzeButton_Click" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
-        <ScrollViewer Grid.Row="2" Grid.ColumnSpan="2">
+        <Grid Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <ComboBox x:Name="ReportSelectorComboBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="ReportSelectorComboBox_SelectionChanged" DisplayMemberPath="ReportName" />
+            <TextBlock x:Name="ReportSummaryText" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="1" Text="Report Summary Text that is too long to fit on a single line." Height="auto" Width="auto" TextWrapping="Wrap" />
+            <Button x:Name="AnalyzeButton" Content="Analyze" Click="AnalyzeButton_Click" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+        </Grid>
+        <Grid x:Name="ReportPropertyGrid" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
             <Grid x:Name="DataGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowGridLines="True" />
         </ScrollViewer>
     </Grid>

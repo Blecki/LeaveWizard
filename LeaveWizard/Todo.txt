@@ -1,7 +1,4 @@
 ﻿Support PTF substitutes
-Track attendance
-	Report for entire office or for specific carrier
 Scrape PI report to track scanning
 Move all command generation into single class
 Find better storage method that helps prevent catastrophic data loss.
-Clean up temporary PDF files

@@ -134,7 +134,13 @@ namespace LeaveWizard
                         if (denied)
                             DailySchedules[(int)day].DeniedLeave.Add(leave);
                         else
+                        {
                             DailySchedules[(int)day].ReliefDays.Add(leave);
+
+                            //Leave supercedes a route assignment.
+                            foreach (var reliefDay in DailySchedules[(int)day].ReliefDays.Where(rd => rd.Substitute == name))
+                                reliefDay.Substitute = "DUMMY";
+                        }
                     }
                     else if (iter.Next == 'B')
                     {
@@ -240,7 +246,7 @@ namespace LeaveWizard
 
             foreach (var ds in DailySchedules) ds.ReliefDays = new List<LeaveEntry>(ds.ReliefDays.OrderBy(rd => rd.Carrier));
 
-            Substitutes = new List<Substitute>(Substitutes.OrderBy(s => s.Name));
+            //Substitutes = new List<Substitute>(Substitutes.OrderBy(s => s.Name));
             Regulars = new List<RegularCarrier>(Regulars.OrderBy(r => r.Route));
         }
 
