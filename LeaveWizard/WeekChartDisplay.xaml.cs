@@ -50,7 +50,8 @@ namespace LeaveWizard
         {
             Regular,
             Sub,
-            Denied
+            Denied,
+            Sunday
         }
 
         public void AddLeaveEntryCell(LeaveEntry Entry, LeaveCellType Type, int Column, int Row)
@@ -72,6 +73,23 @@ namespace LeaveWizard
                         }
                     };
             }
+            else if (Type == LeaveCellType.Sunday)
+            {
+                AddToCell(MainGrid, Column, Row, new TextBlock
+                {
+                    Text = String.Format("| {0} {1}", Entry.Carrier, Entry.Substitute),
+                    ToolTip = "Click to schedule substitute",
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
+                }).MouseDown += (sender, args) =>
+                {
+                    var subSelector = SimpleSelector.Show("Select Substitute", EnumerateAvailableSubs(Entry, Column - 2));
+                    if (subSelector.SelectionMade)
+                    {
+                        ApplyAction(String.Format("A\"{0}\"\"{1}\"{2} ",
+                            Entry.Carrier, subSelector.SelectedItem, Constants.DayNames[Column - 2]));
+                    }
+                };
+            }
             else if (Type == LeaveCellType.Sub || Type == LeaveCellType.Denied)
             {
                 AddToCell(MainGrid, Column, Row, new TextBlock
@@ -81,12 +99,15 @@ namespace LeaveWizard
                 });
             }
 
-            AddToCell(MainGrid, Column, Row, new TextBlock
-                {
-                    Text = "[del] ",
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
-                    ToolTip = "Click to delete leave"
-                }).MouseDown += (sender, args) => ApplyAction(String.Format("D{2}\"{0}\"{1} ", Entry.Carrier, Constants.DayNames[Column - 2], (Type == LeaveCellType.Denied ? "D" : "L")));
+            if (Type != LeaveCellType.Sunday)
+            {
+                AddToCell(MainGrid, Column, Row, new TextBlock
+                    {
+                        Text = "[del] ",
+                        HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                        ToolTip = "Click to delete leave"
+                    }).MouseDown += (sender, args) => ApplyAction(String.Format("D{2}\"{0}\"{1} ", Entry.Carrier, Constants.DayNames[Column - 2], (Type == LeaveCellType.Denied ? "D" : "L")));
+            }
         }
 
         private TextBlock AddToCell(Grid To, int Column, int Row, TextBlock Control)
@@ -250,24 +271,43 @@ namespace LeaveWizard
                 
                 var rowIndex = 0;
 
-                foreach (var regular in Week.Regulars)
+                if (dayIndex == 1 || currentDay.IsHoliday)
                 {
-                    var reliefDay = localReliefDays.Find(r => r.Carrier == regular.Name);
-                    if (reliefDay == null)
-                        AddCell(MainGrid, "", x, rowIndex, "Click to add leave", () =>
-                            {
-                                var leaveSelector = SimpleSelector.Show("Select leave type", Constants.AllLeaveTypes.Select(c => (object)c));
-                                if (leaveSelector.SelectionMade)
-                                    ApplyAction(String.Format("L\"{0}\"{1}{2} ",
-                                        regular.Name, Constants.DayNames[dayIndex], leaveSelector.SelectedItem));
-                            });
-                    else
+                    var sundayRoutes = new List<LeaveEntry>(localReliefDays.Where(rd => rd.LeaveType == "SUNDAY"));
+                    foreach (var sundayRoute in sundayRoutes)
                     {
-                        AddLeaveEntryCell(reliefDay, LeaveCellType.Regular, x, rowIndex);
-                        localReliefDays.Remove(reliefDay);
+                        localReliefDays.Remove(sundayRoute);
+                        AddLeaveEntryCell(sundayRoute, LeaveCellType.Sunday, x, rowIndex);
+                        rowIndex += 1;
                     }
 
-                    rowIndex += 1;
+                    while (rowIndex < CurrentWeek.Regulars.Count)
+                    {
+                        AddCell(MainGrid, "", x, rowIndex, null);
+                        rowIndex += 1;
+                    }
+                }
+                else
+                {
+                    foreach (var regular in Week.Regulars)
+                    {
+                        var reliefDay = localReliefDays.Find(r => r.Carrier == regular.Name);
+                        if (reliefDay == null)
+                            AddCell(MainGrid, "", x, rowIndex, "Click to add leave", () =>
+                                {
+                                    var leaveSelector = SimpleSelector.Show("Select leave type", Constants.AllLeaveTypes.Select(c => (object)c));
+                                    if (leaveSelector.SelectionMade)
+                                        ApplyAction(String.Format("L\"{0}\"{1}{2} ",
+                                            regular.Name, Constants.DayNames[dayIndex], leaveSelector.SelectedItem));
+                                });
+                        else
+                        {
+                            AddLeaveEntryCell(reliefDay, LeaveCellType.Regular, x, rowIndex);
+                            localReliefDays.Remove(reliefDay);
+                        }
+
+                        rowIndex += 1;
+                    }
                 }
 
                 foreach (var rDay in localReliefDays)

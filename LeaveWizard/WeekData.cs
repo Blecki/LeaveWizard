@@ -91,6 +91,8 @@ namespace LeaveWizard
                         DailySchedules[(int)pendingJ.Item1].ReliefDays.Add(pendingJ.Item2);
             }
 
+            PrepareSundayRoutes();
+
             if (String.IsNullOrEmpty(EffectiveChanges)) EffectiveChanges = "";
             var iter = new StringIterator(EffectiveChanges);
 
@@ -167,6 +169,7 @@ namespace LeaveWizard
                         SkipWhitespace(iter);
                         var amazonRoutes = ParseRoute(iter);
                         LeavePolicy = new LeavePolicy { DaysPerSub = daysPerSub, AmazonRoutes = amazonRoutes };
+                        PrepareSundayRoutes();
                     }
                     else if (iter.Next == 'A')
                     {
@@ -248,6 +251,24 @@ namespace LeaveWizard
 
             //Substitutes = new List<Substitute>(Substitutes.OrderBy(s => s.Name));
             Regulars = new List<RegularCarrier>(Regulars.OrderBy(r => r.Route));
+        }
+
+        private void PrepareSundayRoutes()
+        {
+            for (var d = 0; d < 7; ++d)
+            {
+                if (d == 1 || DailySchedules[d].IsHoliday)
+                {
+                    DailySchedules[d].ReliefDays.RemoveAll(rd => rd.LeaveType == "SUNDAY");
+
+                    for (var i = 0; i < LeavePolicy.AmazonRoutes; ++i)
+                        DailySchedules[d].ReliefDays.Add(new LeaveEntry
+                        {
+                            LeaveType = "SUNDAY",
+                            Carrier = String.Format("L{0:000}", i + 1)
+                        });
+                }
+            }
         }
 
         public void ApplyChange(WeekData PreviousWeek, String Command)

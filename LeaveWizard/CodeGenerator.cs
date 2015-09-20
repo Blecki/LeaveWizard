@@ -61,7 +61,11 @@ namespace LeaveWizard
                 {
                     bool subAssigned = false;
 
-                    if (day.LeaveType != "H") // H days should only exist as a result of a future holiday.
+                    if (day.LeaveType == "SUNDAY")
+                    {
+
+                    }
+                    else if (day.LeaveType != "H") // H days should only exist as a result of a future holiday.
                     {
                         if (Constants.PropogatableLeaveTypes.Contains(day.LeaveType))
                         {

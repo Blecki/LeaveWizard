@@ -24,11 +24,11 @@ namespace LeaveWizard
             "UEA",
             "AWOL",
             "ULWOP",
-            "TRNG"
+            "TRNG",
         };
 
         public static String[] DayNames = new String[] { "SAT", "SUN", "MON", "TUE", "WED", "THU", "FRI" };
 
-        public static String PropogatableLeaveTypes = "KJPVW";
+        public static String[] PropogatableLeaveTypes = { "K", "J", "P", "V", "W" };
     }
 }
