@@ -34,19 +34,27 @@ namespace LeaveWizard
                 {
                     var subName = "";
                     var data = "";
-                    var regular = Week.Regulars.Find(r => r.Name == leaveEntry.Carrier);
-                    if (regular != null)
+                    if (leaveEntry.LeaveType == "SUNDAY")
                     {
-                        if (Week.DailySchedules[day].IsHoliday) continue;
-                        if ("R35V".Contains(leaveEntry.LeaveType)) continue; //Don't put regulars on schedule for working relief day.
                         subName = leaveEntry.Substitute;
-                        data = regular.Route.ToString();
-
+                        data = leaveEntry.Carrier;
                     }
                     else
                     {
-                        subName = leaveEntry.Carrier;
-                        data = leaveEntry.LeaveType.ToString();
+                        var regular = Week.Regulars.Find(r => r.Name == leaveEntry.Carrier);
+                        if (regular != null)
+                        {
+                            if (day == 1 || Week.DailySchedules[day].IsHoliday) continue;
+                            if ("R35V".Contains(leaveEntry.LeaveType)) continue; //Don't put regulars on schedule for working relief day.
+                            subName = leaveEntry.Substitute;
+                            data = regular.Route.ToString();
+
+                        }
+                        else
+                        {
+                            subName = leaveEntry.Carrier;
+                            data = leaveEntry.LeaveType;
+                        }
                     }
 
                     if (subName == "DUMMY")

@@ -35,6 +35,8 @@ namespace LeaveWizard
             var realBottom = verticalMargin + topMargin + (rowHeight * rowCount);
             var fontMargin = 5;
 
+            // Draw grid lines
+
             for (double x = horizontalMargin; x <= width; x += columnWidth)
                 Graphics.DrawLine(boldPen, x, verticalMargin, x, realBottom);
 
@@ -43,16 +45,23 @@ namespace LeaveWizard
             for (double y = verticalMargin + topMargin; y <= realBottom; y += rowHeight)
                 Graphics.DrawLine(basicPen, horizontalMargin, y, width - horizontalMargin, y);
 
+            // Draw info block at top-left
             Graphics.DrawString("Relief Carrier", font, XBrushes.Black, new XRect(horizontalMargin, verticalMargin, columnWidth, topMargin), XStringFormats.TopCenter);
             Graphics.DrawString("Schedule", font, XBrushes.Black, new XRect(horizontalMargin, verticalMargin + 16, columnWidth, topMargin), XStringFormats.TopCenter);
             Graphics.DrawString(String.Format("PP {0} WK {1}", Week.PayPeriod, Week.Week), font, XBrushes.Black, new XRect(horizontalMargin, verticalMargin, columnWidth, topMargin), XStringFormats.BottomCenter);
 
+            // Draw Day Headers
             for (var day = 0; day < 7; ++day)
             {
                 Graphics.DrawString(LongDayNames[day], font, XBrushes.Black, new XRect(horizontalMargin + (columnWidth * (day + 1)), verticalMargin, columnWidth, topMargin), XStringFormats.TopCenter);
+
+                if (Week.DailySchedules[day].IsHoliday)
+                    Graphics.DrawString("HOLIDAY", font, XBrushes.Black, new XRect(horizontalMargin + (columnWidth * (day + 1)), verticalMargin, columnWidth, topMargin), XStringFormats.Center); 
+
                 Graphics.DrawString((Week.SaturdayDate + TimeSpan.FromDays(day)).ToShortDateString(), font, XBrushes.Black, new XRect(horizontalMargin + (columnWidth * (day + 1)), verticalMargin, columnWidth, topMargin), XStringFormats.BottomCenter);
             }
 
+            // Draw actual sub schedule.
             var row = 0;
             foreach (var sub in schedule.Subs)
             {
@@ -63,6 +72,7 @@ namespace LeaveWizard
                 row += 1;
             }
 
+            // Draw open routes at bottom of schedule.
             for (var day = 0; day < 7; ++day)
             {
                 var top = row;

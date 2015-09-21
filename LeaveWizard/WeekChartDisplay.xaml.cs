@@ -145,19 +145,32 @@ namespace LeaveWizard
 
         public IEnumerable<String> EnumerateAvailableSubs(LeaveEntry Leave, int Day)
         {
-            if (Leave.LeaveType == "K" || Leave.LeaveType == "J")
+            if (Leave.LeaveType == "SUNDAY")
             {
-                yield return "3 - " + Leave.Carrier;
-                yield return "5 - " + Leave.Carrier;
-                yield return "R - " + Leave.Carrier;
+                foreach (var sub in CurrentWeek.Substitutes)
+                {
+                    var foundDay = CurrentWeek.DailySchedules[Day].ReliefDays.Find(d => d.Substitute == sub.Name);
+                    if (foundDay != null && foundDay.LeaveType == "SUNDAY") continue;
+                    if (CurrentWeek.DailySchedules[Day].ReliefDays.Find(d => d.Carrier == sub.Name) != null) continue;
+                    yield return sub.Name;
+                }
             }
+            else
+            {
+                if (Leave.LeaveType == "K" || Leave.LeaveType == "J")
+                {
+                    yield return "3 - " + Leave.Carrier;
+                    yield return "5 - " + Leave.Carrier;
+                    yield return "R - " + Leave.Carrier;
+                }
 
-            if (Leave.LeaveType == "H") yield return "V - " + Leave.Carrier;
+                if (Leave.LeaveType == "H") yield return "V - " + Leave.Carrier;
 
-            yield return "DUMMY";
+                yield return "DUMMY";
 
-            foreach (var sub in CurrentWeek.Substitutes.Where(s => CurrentWeek.DailySchedules[Day].ReliefDays.Find(d => d.Substitute == s.Name) == null).Where(s => CurrentWeek.DailySchedules[Day].ReliefDays.Find(d => d.Carrier == s.Name) == null))
-                yield return sub.Name;
+                foreach (var sub in CurrentWeek.Substitutes.Where(s => CurrentWeek.DailySchedules[Day].ReliefDays.Find(d => d.Substitute == s.Name) == null).Where(s => CurrentWeek.DailySchedules[Day].ReliefDays.Find(d => d.Carrier == s.Name) == null))
+                    yield return sub.Name;
+            }
         }
 
         public IEnumerable<String> EnumerateAllCarriers()
