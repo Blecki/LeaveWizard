@@ -4,31 +4,22 @@
         xmlns:local="clr-namespace:LeaveWizard" x:Class="LeaveWizard.MainWindow"
         Title="MainWindow" Height="350" Width="724" Closing="Window_Closing" WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Help" Click="HelpMenuItem_Click"/>
-        </Menu>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             
-            <local:WeekChartDisplay x:Name="WeekChart" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+            <local:WeekChartDisplay x:Name="WeekChart" Margin="0,0,0,0" VerticalAlignment="Top" Grid.Row="0"/>
 
-            
-            <StackPanel Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft">
-                <Button Content="&lt; Next Week &lt;" Click="NextWeek_Click" Margin="2,2,2,2"/>
-                <Button Content="&gt; Current Week &lt;" Click="Now_Click" Margin="2,2,2,2"/>
-                <Button Content="&gt; Previous Week &gt;" Click="PrevWeek_Click" Margin="2,2,2,2"/>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                <Label x:Name="WeekInfoLabel" Content="Label" ToolTip="Click to set Date and Payperiod" MouseDown="WeekInfoLabel_MouseDown" Margin="2,2,2,2" HorizontalAlignment="Left"/>
+
+                <Label x:Name="SubCountInfoLineLabel" Content="Label" Margin="5,2,2,2" MouseDown="SubCountInfoLineLabel_MouseDown" ToolTip="Click to set leave policy and amazon route counts."/>
             </StackPanel>
 
-            <Label x:Name="WeekInfoLabel" Grid.Row="0" Content="Label" ToolTip="Click to set Date and Payperiod" MouseDown="WeekInfoLabel_MouseDown" Margin="2,2,2,2" HorizontalAlignment="Left"/>
-
-            <Label x:Name="SubCountInfoLineLabel" Content="Label" Margin="5,2,2,2" Grid.Row="2" MouseDown="SubCountInfoLineLabel_MouseDown"/>
-            
-            <WrapPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2">
+            <WrapPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
                 <GroupBox Header="Diagnostic">
                     <StackPanel Orientation="Horizontal">
                         <TextBox Margin="2,2,2,2" Width="160" x:Name="AdminPasswordInput" TextChanged="AdminPasswordInput_TextChanged"/>
@@ -54,6 +45,21 @@
                         <Button Content="Analyze" Margin="2,2,2,2" x:Name="LeaveSummyButton" Click="LeaveSummyButton_Click"/>
                     </WrapPanel>
                 </GroupBox>
+
+                <GroupBox Header="Navigation">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Right" Width="auto">
+                        <Button Content="&lt; Previous Week &lt;" Click="PrevWeek_Click" Margin="2,2,2,2"/>
+                        <Button Content="&gt; Current Week &lt;" Click="Now_Click" Margin="2,2,2,2"/>
+                        <Button Content="&gt; Next Week &gt;" Click="NextWeek_Click" Margin="2,2,2,2"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Tools">
+                    <WrapPanel>
+                        <Button Content="Help" Click="HelpMenuItem_Click"/>
+                    </WrapPanel>
+                </GroupBox>
+
             </WrapPanel>
         </Grid>
     </DockPanel>

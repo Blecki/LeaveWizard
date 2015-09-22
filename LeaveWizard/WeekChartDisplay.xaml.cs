@@ -133,8 +133,9 @@ namespace LeaveWizard
 
         public IEnumerable<int> EnumerateLeaveColumnHeights(WeekData Week)
         {
-            foreach (var day in Week.DailySchedules)
-                yield return day.ReliefDays.Where(r => Week.Regulars.Find(c => c.Name == r.Carrier) == null).Count() + Week.Regulars.Count;
+            for (var day = 0; day < 7; ++day)
+                if (day == 1 || Week.DailySchedules[day].IsHoliday) yield return Week.LeavePolicy.AmazonRoutes;
+                else yield return Week.DailySchedules[day].ReliefDays.Where(r => Week.Regulars.Find(c => c.Name == r.Carrier) == null).Count() + Week.Regulars.Count;
         }
 
         public IEnumerable<int> EnumerateDeniedLeaveCounts(WeekData Week)
@@ -188,7 +189,7 @@ namespace LeaveWizard
             MainGrid.Children.Clear();
             MainGrid.RowDefinitions.Clear();
 
-            MouseCoordBlock = AddToCell(TopGrid, 0, 1, new TextBlock { Text = "----" });
+            //MouseCoordBlock = AddToCell(TopGrid, 0, 1, new TextBlock { Text = "----" });
             
             if (CurrentWeek == null) return;
 
@@ -232,14 +233,23 @@ namespace LeaveWizard
                 }
             }
 
-            AddCell(TopGrid, "Routes", 1, 0, "All routes");
-            AddCell(TopGrid, "", 1, 1, null);
+            AddCell(TopGrid, "D", 1, 0, "Days Scheduled", null);
+            AddCell(TopGrid, "S", 1, 1, "Days Scheduled", null);
+
+            for (var i = 0; i < Week.Substitutes.Count; ++i)
+                AddCell(MainGrid, CountSubstituteScheduledDays(Week, Week.Substitutes[i].Name).ToString(), 1, i, "", null);
+
+            for (var i = Week.Substitutes.Count; i < maxRows; ++i)
+                AddCell(MainGrid, "", 1, i, "", null);
+
+                AddCell(TopGrid, "Routes", 2, 0, "All routes");
+            AddCell(TopGrid, "", 2, 1, null);
             for (var i = 0; i < maxRows; ++i)
             {
                 if (i > Week.Regulars.Count)
-                    AddCell(MainGrid, "", 1, i, "", null);
+                    AddCell(MainGrid, "", 2, i, "", null);
                 else if (i >= Week.Regulars.Count)
-                    AddCell(MainGrid, "+ new regular/route", 1, i, "Click to add regular", () =>
+                    AddCell(MainGrid, "+ new regular/route", 2, i, "Click to add regular", () =>
                     {
                         var creator = CreateRegular.Show();
                         if (creator.FinishedInput)
@@ -248,9 +258,9 @@ namespace LeaveWizard
                 else
                 {
                     var lambdaR = Week.Regulars[i];
-                    AddCell(MainGrid, lambdaR.ToString(), 1, i, null);
+                    AddCell(MainGrid, lambdaR.ToString(), 2, i, null);
 
-                    AddToCell(MainGrid, 1, i, new TextBlock
+                    AddToCell(MainGrid, 2, i, new TextBlock
                     {
                         Text = "[del] ",
                         HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
@@ -259,10 +269,10 @@ namespace LeaveWizard
                 }
             }
 
-            for (var x = 2; x < 9; ++x)
+            for (var x = 3; x < 10; ++x)
             {
-                var currentDay = Week.DailySchedules[x - 2];
-                var dayIndex = x - 2;
+                var currentDay = Week.DailySchedules[x - 3];
+                var dayIndex = x - 3;
                 AddCell(TopGrid, ((DayOfWeek)dayIndex).ToString() + " - " + OffsetDateString(dayIndex) + (currentDay.IsHoliday ? " - HOLIDAY" : ""), x, 0, null);
                 
                 var localReliefDays = new List<LeaveEntry>(Week.DailySchedules[dayIndex].ReliefDays);
@@ -390,6 +400,19 @@ namespace LeaveWizard
             this.InvalidateVisual();
         }
 
+        private int CountSubstituteScheduledDays(WeekData Week, string SubstituteName)
+        {
+            var r = 0;
+            for (var day = 0; day < 7; ++day)
+            {
+                if (day == 1 || Week.DailySchedules[day].IsHoliday)
+                    r += Week.DailySchedules[day].ReliefDays.Count(entry => entry.Substitute == SubstituteName && entry.LeaveType == "SUNDAY");
+                else
+                    r += Week.DailySchedules[day].ReliefDays.Count(entry => entry.Substitute == SubstituteName);
+            }
+            return r;
+        }
+
         private void UpdateMouseHilite()
         {
             var pos = Mouse.GetPosition(MainGrid);
@@ -418,7 +441,7 @@ namespace LeaveWizard
                 {
                     var row = textBlock.GetValue(Grid.RowProperty) as int?;
                     var col = textBlock.GetValue(Grid.ColumnProperty) as int?;
-                    if (col.HasValue && col.Value == 0) continue;
+                    if (col.HasValue && col.Value <= 1) continue;
                     if (row.HasValue && row.Value == mouseRow) textBlock.Background = MouseRowBackground;
                 }
             }
