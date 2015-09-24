@@ -1,4 +1,4 @@
-﻿<Window x:Class="LeaveWizard.VerifyLeave"
+﻿<Window x:Class="LeaveWizard.Wizard"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="VerifyLeave" Height="600" Width="600"
@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         
         <Label Content="Carrier Name:" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <TextBox x:Name="NameInput" Grid.Row="0" HorizontalAlignment="Stretch" Margin="90,2,2,2" TextChanged="NameInput_TextChanged"/>
+        <ComboBox x:Name="NameInput" Grid.Row="0" HorizontalAlignment="Stretch" Margin="90,2,2,2" />
         
         <Label Content="Start Date:" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <TextBox x:Name="StartInput" Grid.Row="1" HorizontalAlignment="Stretch" Margin="90,2,2,2" TextChanged="StartInput_TextChanged"/>

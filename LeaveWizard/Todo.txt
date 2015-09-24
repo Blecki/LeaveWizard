@@ -2,3 +2,8 @@
 Scrape PI report to track scanning
 Move all command generation into single class
 Find better storage method that helps prevent catastrophic data loss.
+
+Error check substitute matricies
+Drop down list for selecting carrier in leave wizard / analysis.
+Maintain substitute seniority
+Substitute flags

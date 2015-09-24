@@ -65,11 +65,11 @@ namespace LeaveWizard
                     HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
                 }).MouseDown += (sender, args) =>
                     {
-                        var subSelector = SimpleSelector.Show("Select Substitute", EnumerateAvailableSubs(Entry, Column - 2));
+                        var subSelector = SimpleSelector.Show("Select Substitute", EnumerateAvailableSubs(Entry, Column - 3));
                         if (subSelector.SelectionMade)
                         {
                             ApplyAction(String.Format("A\"{0}\"\"{1}\"{2} ",
-                                Entry.Carrier, subSelector.SelectedItem, Constants.DayNames[Column - 2]));
+                                Entry.Carrier, subSelector.SelectedItem, Constants.DayNames[Column - 3]));
                         }
                     };
             }
@@ -82,11 +82,11 @@ namespace LeaveWizard
                     HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
                 }).MouseDown += (sender, args) =>
                 {
-                    var subSelector = SimpleSelector.Show("Select Substitute", EnumerateAvailableSubs(Entry, Column - 2));
+                    var subSelector = SimpleSelector.Show("Select Substitute", EnumerateAvailableSubs(Entry, Column - 3));
                     if (subSelector.SelectionMade)
                     {
                         ApplyAction(String.Format("A\"{0}\"\"{1}\"{2} ",
-                            Entry.Carrier, subSelector.SelectedItem, Constants.DayNames[Column - 2]));
+                            Entry.Carrier, subSelector.SelectedItem, Constants.DayNames[Column - 3]));
                     }
                 };
             }
@@ -106,7 +106,7 @@ namespace LeaveWizard
                         Text = "[del] ",
                         HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
                         ToolTip = "Click to delete leave"
-                    }).MouseDown += (sender, args) => ApplyAction(String.Format("D{2}\"{0}\"{1} ", Entry.Carrier, Constants.DayNames[Column - 2], (Type == LeaveCellType.Denied ? "D" : "L")));
+                    }).MouseDown += (sender, args) => ApplyAction(String.Format("D{2}\"{0}\"{1} ", Entry.Carrier, Constants.DayNames[Column - 3], (Type == LeaveCellType.Denied ? "D" : "L")));
             }
         }
 

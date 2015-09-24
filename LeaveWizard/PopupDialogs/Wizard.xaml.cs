@@ -16,18 +16,16 @@ namespace LeaveWizard
     /// <summary>
     /// Interaction logic for VerifyLeave.xaml
     /// </summary>
-    public partial class VerifyLeave : Window
+    public partial class Wizard : Window
     {
-        public LeaveChart Chart;
+        private LeaveChart Chart;
         Brush DefaultBackground;
         Brush ErrorBackground = new SolidColorBrush(Colors.Red);
 
         private DateTime StartDate;
         private DateTime EndDate;
-        private String CarrierName;
         private bool StartDateValid = false;
         private bool EndDateValid = false;
-        private bool CarrierNameValid = false;
 
         enum DayAction
         {
@@ -47,12 +45,11 @@ namespace LeaveWizard
 
         private List<AnalyzedDay> AnalyzedDays;
 
-        public VerifyLeave()
+        public Wizard()
         {
             InitializeComponent();
             DefaultBackground = NameInput.Background;
 
-            SetValid(NameInput, false);
             SetValid(StartInput, false);
             SetValid(EndInput, false);
             AnalyzeButton.IsEnabled = false;
@@ -64,6 +61,15 @@ namespace LeaveWizard
                 LeaveSelector.Items.Add(leaveType);
 
             LeaveSelector.SelectedIndex = 0;
+        }
+
+        public void SetChart(LeaveChart Chart)
+        {
+            this.Chart = Chart;
+
+            foreach (var carrier in Chart.EnumerateAllCarriers())
+                NameInput.Items.Add(carrier);
+            NameInput.SelectedIndex = 0;
         }
 
         private void AnalyzeButton_Click(object sender, RoutedEventArgs e)
@@ -115,7 +121,7 @@ namespace LeaveWizard
                     dayIndex = dayDelta.Days;
                 #endregion
 
-                var analyzedDay = AnalyzeDay(currentWeekIndex, dayIndex, leaveAddedThisWeek);
+                var analyzedDay = AnalyzeDay(currentWeekIndex, dayIndex, leaveAddedThisWeek, NameInput.Text);
                 if (analyzedDay.Action == DayAction.Grant)
                     leaveAddedThisWeek += 1;
 
@@ -194,7 +200,7 @@ namespace LeaveWizard
                     commandQueue = "";
                 }
 
-                commandQueue += String.Format("L\"{0}\"{1}{2}\n", CarrierName, Constants.DayNames[day.Day], LeaveSelector.Text);
+                commandQueue += String.Format("L\"{0}\"{1}{2}\n", NameInput.Text, Constants.DayNames[day.Day], LeaveSelector.Text);
             }
 
             ApplyCommand(currentWeek, commandQueue);
@@ -225,7 +231,7 @@ namespace LeaveWizard
                     commandQueue = "";
                 }
 
-                commandQueue += String.Format("LD\"{0}\"{1}{2}\n", CarrierName, Constants.DayNames[day.Day], LeaveSelector.Text);
+                commandQueue += String.Format("LD\"{0}\"{1}{2}\n", NameInput.Text, Constants.DayNames[day.Day], LeaveSelector.Text);
             }
 
             ApplyCommand(currentWeek, commandQueue);
@@ -238,19 +244,11 @@ namespace LeaveWizard
             this.Close();
         }
 
-        private void NameInput_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            CarrierName = NameInput.Text;
-            CarrierNameValid = !String.IsNullOrEmpty(CarrierName);
-            SetValid(NameInput, CarrierNameValid);
-            AnalyzeButton.IsEnabled = CarrierNameValid && StartDateValid && EndDateValid;
-        }
-
         private void StartInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             VerifyDate(StartInput.Text, out StartDate, out StartDateValid);
             SetValid(StartInput, StartDateValid);
-            AnalyzeButton.IsEnabled = CarrierNameValid && StartDateValid && EndDateValid;
+            AnalyzeButton.IsEnabled = StartDateValid && EndDateValid;
         }
 
         private void EndInput_TextChanged(object sender, TextChangedEventArgs e)
@@ -258,7 +256,7 @@ namespace LeaveWizard
             VerifyDate(EndInput.Text, out EndDate, out EndDateValid);
             EndDateValid = EndDateValid & EndDate >= StartDate;
             SetValid(EndInput, EndDateValid);
-            AnalyzeButton.IsEnabled = CarrierNameValid && StartDateValid && EndDateValid;
+            AnalyzeButton.IsEnabled = StartDateValid && EndDateValid;
         }
 
         private void SetValid(TextBox Box, bool Valid)
@@ -281,7 +279,7 @@ namespace LeaveWizard
             }
         }
 
-        private AnalyzedDay AnalyzeDay(int WeekIndex, int DayIndex, int AdditionalLeaveThisWeek)
+        private AnalyzedDay AnalyzeDay(int WeekIndex, int DayIndex, int AdditionalLeaveThisWeek, String CarrierName)
         {
             var result = new AnalyzedDay();
             result.Action = DayAction.Grant;
@@ -291,6 +289,14 @@ namespace LeaveWizard
 
             var isAmazonOnlyDay = DayIndex == (int)DayOfWeek.Sunday || Chart.Weeks[WeekIndex].DailySchedules[DayIndex].IsHoliday;
             var carrierIsSub = Chart.Weeks[WeekIndex].Substitutes.Find(s => s.Name == CarrierName) != null;
+            var carrierIsRegular = Chart.Weeks[WeekIndex].Regulars.Find(r => r.Name == CarrierName) != null;
+
+            if (!carrierIsSub && !carrierIsRegular)
+            {
+                result.Action = DayAction.Skip;
+                result.DenyReason = "Carrier does not exist in data for this date.";
+                return result;
+            }
 
             //Check for existing leave.
             var existingLeave = Chart.Weeks[WeekIndex].DailySchedules[DayIndex].ReliefDays.Find(rd => rd.Carrier == CarrierName);
@@ -354,7 +360,7 @@ namespace LeaveWizard
                 }
             }
 
-            // Check is someone else has already been denied this day.
+            // Check if someone else has already been denied this day.
             if (Chart.Weeks[WeekIndex].DailySchedules[DayIndex].DeniedLeave.Count != 0)
             {
                 result.Action = DayAction.Deny;

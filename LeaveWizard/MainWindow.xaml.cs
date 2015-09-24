@@ -212,8 +212,8 @@ namespace LeaveWizard
 
         private void LeaveWizardButton_Click(object sender, RoutedEventArgs e)
         {
-            var wizard = new VerifyLeave();
-            wizard.Chart = Data;
+            var wizard = new Wizard();
+            wizard.SetChart(Data);
             wizard.ShowDialog();
 
             UpdateDisplay();

@@ -99,8 +99,8 @@
       <DependentUpon>SimpleSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="StringIterator.cs" />
-    <Compile Include="PopupDialogs\VerifyLeave.xaml.cs">
-      <DependentUpon>VerifyLeave.xaml</DependentUpon>
+    <Compile Include="PopupDialogs\Wizard.xaml.cs">
+      <DependentUpon>Wizard.xaml</DependentUpon>
     </Compile>
     <Compile Include="WeekChartDisplay.xaml.cs">
       <DependentUpon>WeekChartDisplay.xaml</DependentUpon>
@@ -155,7 +155,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PopupDialogs\VerifyLeave.xaml">
+    <Page Include="PopupDialogs\Wizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
